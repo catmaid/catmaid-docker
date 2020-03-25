@@ -34,6 +34,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./volumes/app/static:/home/django/static
+      - ./volumes/app/run:/var/run/catmaid:rw
       - /etc/localtime:/etc/localtime:ro
     environment:
       # set same as db credentials and dbname
@@ -81,6 +82,7 @@ services:
       # This directory must have cert files
       - ./volumes/web/cert:/cert:ro
       - ./volumes/app/static:/static:ro
+      - ./volumes/app/run/:/sockets:rw
       - /etc/localtime:/etc/localtime:ro
     environment:
       # Basic HTTP authentication can be enabled by setting the environment
