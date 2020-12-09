@@ -1,9 +1,12 @@
-version: "3"
+version: "3.5"
 
 services:
 
   db:
-    build: db
+    build:
+      context: db
+      # shm_size: '2gb' # build-time
+      #
     restart: on-failure
     volumes:
       - ./volumes/db/var/lib/postgresql/data:/var/lib/postgresql/data

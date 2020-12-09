@@ -69,13 +69,13 @@ install_postgres() {
     case "$dpkgArch" in \
       amd64|i386|ppc64el) \
   # arches officialy built by upstream
-        echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
+        echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
         apt-get update; \
         ;; \
       *) \
   # we're on an architecture upstream doesn't officially build for
   # let's build binaries from their published source packages
-        echo "deb-src http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
+        echo "deb-src http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
         \
         tempDir="$(mktemp -d)"; \
         cd "$tempDir"; \
@@ -140,7 +140,10 @@ update_postgres () {
   apt-get update
 
   apt-get install -y --no-install-recommends liblwgeom-dev tzdata
-  apt-get install -y --no-install-recommends "postgresql-$DATA_PG_VERSION-postgis-$DB_POSTGIS_VERSION" "postgresql-$DATA_PG_VERSION-postgis-$DB_POSTGIS_VERSION-scripts"
+
+  # Install all support PostgIS versions
+  echo "- Installing all available PostGIS versions for Postgres $DATA_PG_VERSION"
+  apt-get install -y --no-install-recommends "postgresql-$DATA_PG_VERSION-postgis-[0-9]+.?[0-9]*$" "postgresql-$DATA_PG_VERSION-postgis-[0-9]+.?[0-9]*-scripts$"
 
   echo "- Ensuring correct permissions for Postgres data directory"
   chown -R postgres:postgres /var/lib/postgresql/data
@@ -171,6 +174,9 @@ update_postgres () {
     su postgres -c "${PSQL_OLD} -d ${database} -c \"ALTER EXTENSION postgis UPDATE;\" >> /dev/null; exit 0"
     su postgres -c "${PSQL_OLD} -d ${database} -c \"ALTER EXTENSION postgis_topology UPDATE;\" >> /dev/null; exit 0"
     su postgres -c "${PSQL_OLD} -d ${database} -c \"ALTER EXTENSION postgis_tiger_geocoder UPDATE;\" >> /dev/null; exit 0"
+    su postgres -c "${PSQL_OLD} -d ${database} -c \"SELECT postgis_extensions_upgrade();\" >> /dev/null; exit 0"
+    # We don't use raster and this might make upgrades easier.
+    su postgres -c "${PSQL_OLD} -d ${database} -c \"DROP EXTENSION postgis;\" >> /dev/null; exit 0"
   done
 
   # The original install user is needed for pg_upgrade
@@ -203,7 +209,7 @@ update_postgres () {
   su postgres -c "cd /var/lib/postgresql/data/; /usr/lib/postgresql/${BIN_PG_VERSION}/bin/pg_upgrade -b '/usr/lib/postgresql/${DATA_PG_VERSION}/bin/' -B '/usr/lib/postgresql/${BIN_PG_VERSION}/bin/' -d '/var/lib/postgresql/data/old-data/' -D '/var/lib/postgresql/data/new-data' -k -p 5433 -P 5434 -U ${PG_INSTALL_USER}"
 
   echo "- Uninstalling old Postgres $DATA_PG_VERSION binaries"
-  apt-get remove -y "postgresql-$DATA_PG_VERSION" "postgresql-$DATA_PG_VERSION-postgis-$DB_POSTGIS_VERSION"
+  apt-get remove -y "postgresql-$DATA_PG_VERSION" "postgresql-$DATA_PG_VERSION-postgis-*"
   apt-get autoremove -y
 
   echo "- Move Postgres data directories into right place"
@@ -254,4 +260,4 @@ fi
 
 check_db_superuser &
 tune_db &
-. /docker-entrypoint.sh postgres
+exec /docker-entrypoint.sh postgres
