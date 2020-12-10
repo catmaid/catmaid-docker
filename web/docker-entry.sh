@@ -25,4 +25,4 @@ else
   echo "HTTP Basic Authentication disabled"
 fi
 
-nginx -g 'daemon off;'
+exec nginx -g 'daemon off;'
