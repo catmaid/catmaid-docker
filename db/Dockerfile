@@ -13,4 +13,4 @@ COPY ./pg_tune.py /
 COPY custom-docker-entrypoint.sh /
 RUN chmod +x /custom-docker-entrypoint.sh
 
-ENTRYPOINT /custom-docker-entrypoint.sh
+ENTRYPOINT ["/custom-docker-entrypoint.sh"]
