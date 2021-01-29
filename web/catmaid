@@ -11,6 +11,10 @@ upstream catmaid-asgi {
     server unix:///sockets/daphne.sock;
 }
 
+types {
+    application/wasm wasm;
+}
+
 server {
     listen 80;
 
