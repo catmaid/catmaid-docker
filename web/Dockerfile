@@ -11,6 +11,7 @@ RUN apt-get update -y \
 
 RUN rm /etc/nginx/conf.d/default.conf
 COPY ./catmaid /etc/nginx/sites-available/
+COPY ./nginx-cors-open.conf /etc/nginx/
 #COPY ./catmaid-ssl /etc/nginx/sites-available/
 
 COPY docker-entry.sh /

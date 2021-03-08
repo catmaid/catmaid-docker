@@ -82,6 +82,9 @@ server {
         # environment variables in the docker-compose.yml file.
         auth_basic off;
         auth_basic_user_file auth.htpasswd;
+
+        # Configure CORS access
+        include cors.conf;
     }
 
     location /channels/ {

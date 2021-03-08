@@ -3,6 +3,7 @@
 HTTP_AUTH_ENABLED=${HTTP_AUTH_ENABLED:-false}
 HTTP_AUTH_USER=${HTTP_AUTH_USER:-""}
 HTTP_AUTH_PASS=${HTTP_AUTH_PASS:-""}
+CORS_OPEN=${CORS_OPEN:-true}
 
 if [ -f "/cert/cert.pem" -a -f "/cert/key-no-password.pem" ]; then
   echo "found certificate and key, linking ssl config"
@@ -23,6 +24,15 @@ then
 else
   sed -ri 's/auth_basic *$/auth_basic off;/' /etc/nginx/conf.d/catmaid.conf
   echo "HTTP Basic Authentication disabled"
+fi
+
+# CORS
+if [[ "$CORS_OPEN" = true ]]; then
+  echo "Allowing open CORS access: linking nginx-cors-open.conf"
+  ln -sf /etc/nginx/nginx-cors-open.conf /etc/nginx/cors.conf
+else
+  echo "CORS access will not be allowed"
+  echo '' > /etc/nginx/cors.conf
 fi
 
 exec nginx -g 'daemon off;'

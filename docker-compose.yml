@@ -94,5 +94,7 @@ services:
       - HTTP_AUTH_ENABLED=false
       #- HTTP_AUTH_USER=catmaid
       #- HTTP_AUTH_PASS=secure_password
+      # CORS access, enabled by default.
+      - CORS_OPEN=true
     depends_on:
       - app
