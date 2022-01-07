@@ -10,7 +10,7 @@ DB_UPDATE=${DB_UPDATE:-false}
 AVAILABLE_MEMORY=`awk '/MemTotal/ { printf "%.3f \n", $2/1024 }' /proc/meminfo`
 INSTANCE_MEMORY=${INSTANCE_MEMORY:-$AVAILABLE_MEMORY}
 DATA_PG_VERSION=$(cat /var/lib/postgresql/data/PG_VERSION)
-BIN_PG_VERSION="12"
+BIN_PG_VERSION="13"
 DB_POSTGIS_VERSION="3"
 DB_SUPERUSER=${POSTGRES_USER:-postgres}
 PG_BIN="/usr/lib/postgresql/${BIN_PG_VERSION}/bin"
@@ -141,7 +141,7 @@ update_postgres () {
 
   apt-get install -y --no-install-recommends liblwgeom-dev tzdata
 
-  # Install all support PostgIS versions
+  # Install all supported PostGIS versions
   echo "- Installing all available PostGIS versions for Postgres $DATA_PG_VERSION"
   apt-get install -y --no-install-recommends "postgresql-$DATA_PG_VERSION-postgis-[0-9]+.?[0-9]*$" "postgresql-$DATA_PG_VERSION-postgis-[0-9]+.?[0-9]*-scripts$"
 
