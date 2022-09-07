@@ -9,7 +9,12 @@ DB_TUNE=${DB_TUNE:-true}
 DB_UPDATE=${DB_UPDATE:-false}
 AVAILABLE_MEMORY=`awk '/MemTotal/ { printf "%.3f \n", $2/1024 }' /proc/meminfo`
 INSTANCE_MEMORY=${INSTANCE_MEMORY:-$AVAILABLE_MEMORY}
-DATA_PG_VERSION=$(cat /var/lib/postgresql/data/PG_VERSION)
+# The file might not be there, if no DB has been created yet
+if [[ -f /var/lib/postgresql/data/PG_VERSION ]]; then
+  DATA_PG_VERSION=$(</var/lib/postgresql/data/PG_VERSION)
+else
+  DATA_PG_VERSION=13
+fi
 BIN_PG_VERSION="13"
 DB_POSTGIS_VERSION="3"
 DB_SUPERUSER=${POSTGRES_USER:-postgres}
@@ -69,13 +74,13 @@ install_postgres() {
     case "$dpkgArch" in \
       amd64|i386|ppc64el) \
   # arches officialy built by upstream
-        echo "deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
+        echo "deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
         apt-get update; \
         ;; \
       *) \
   # we're on an architecture upstream doesn't officially build for
   # let's build binaries from their published source packages
-        echo "deb-src http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
+        echo "deb-src http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main $PG_MAJOR" > /etc/apt/sources.list.d/pgdg.list; \
         \
         tempDir="$(mktemp -d)"; \
         cd "$tempDir"; \
@@ -139,7 +144,7 @@ update_postgres () {
   apt-get clean
   apt-get update
 
-  apt-get install -y --no-install-recommends liblwgeom-dev tzdata
+  apt-get install -y --no-install-recommends tzdata
 
   # Install all supported PostGIS versions
   echo "- Installing all available PostGIS versions for Postgres $DATA_PG_VERSION"
@@ -258,6 +263,12 @@ docker-compose.yml file.\n"
   fi
 fi
 
-check_db_superuser &
-tune_db &
-exec /docker-entrypoint.sh postgres
+{
+  sleep 5
+  echo "Database system check"
+  check_db_superuser
+  tune_db
+} &
+
+echo "Starting database"
+exec su -s /bin/sh -c 'exec postgres' postgres
