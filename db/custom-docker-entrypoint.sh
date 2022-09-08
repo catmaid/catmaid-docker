@@ -9,13 +9,13 @@ DB_TUNE=${DB_TUNE:-true}
 DB_UPDATE=${DB_UPDATE:-false}
 AVAILABLE_MEMORY=`awk '/MemTotal/ { printf "%.3f \n", $2/1024 }' /proc/meminfo`
 INSTANCE_MEMORY=${INSTANCE_MEMORY:-$AVAILABLE_MEMORY}
+BIN_PG_VERSION="13"
 # The file might not be there, if no DB has been created yet
 if [[ -f /var/lib/postgresql/data/PG_VERSION ]]; then
   DATA_PG_VERSION=$(</var/lib/postgresql/data/PG_VERSION)
 else
-  DATA_PG_VERSION=13
+  DATA_PG_VERSION=${BIN_PG_VERSION}
 fi
-BIN_PG_VERSION="13"
 DB_POSTGIS_VERSION="3"
 DB_SUPERUSER=${POSTGRES_USER:-postgres}
 PG_BIN="/usr/lib/postgresql/${BIN_PG_VERSION}/bin"
