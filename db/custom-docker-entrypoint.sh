@@ -149,6 +149,7 @@ update_postgres () {
   # Install all supported PostGIS versions
   echo "- Installing all available PostGIS versions for Postgres $DATA_PG_VERSION"
   apt-get install -y --no-install-recommends "postgresql-$DATA_PG_VERSION-postgis-[0-9]+.?[0-9]*$" "postgresql-$DATA_PG_VERSION-postgis-[0-9]+.?[0-9]*-scripts$"
+  apt-get install -y --no-install-recommends "postgresql-$BIN_PG_VERSION-postgis-[0-9]+.?[0-9]*$" "postgresql-$BIN_PG_VERSION-postgis-[0-9]+.?[0-9]*-scripts$"
 
   echo "- Ensuring correct permissions for Postgres data directory"
   chown -R postgres:postgres /var/lib/postgresql/data
