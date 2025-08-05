@@ -182,7 +182,7 @@ update_postgres () {
     su postgres -c "${PSQL_OLD} -d ${database} -c \"ALTER EXTENSION postgis_tiger_geocoder UPDATE;\" >> /dev/null; exit 0"
     su postgres -c "${PSQL_OLD} -d ${database} -c \"SELECT postgis_extensions_upgrade();\" >> /dev/null; exit 0"
     # We don't use raster and this might make upgrades easier.
-    su postgres -c "${PSQL_OLD} -d ${database} -c \"DROP EXTENSION postgis;\" >> /dev/null; exit 0"
+    su postgres -c "${PSQL_OLD} -d ${database} -c \"DROP EXTENSION postgis_raster;\" >> /dev/null; exit 0"
   done
 
   # The original install user is needed for pg_upgrade
