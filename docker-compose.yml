@@ -73,6 +73,8 @@ services:
       # Whether or not to force setting the defined client settings, replaced
       # existing entries.
       #CM_FORCE_CLIENT_SETTINGS: "false"
+      # Server settings
+      # CM_SERVER_SETTINGS: "CROPPING_VERIFY_CERTIFICATES=False\nGENERATED_FILES_MAXIMUM_SIZE=262144000\nPROFILE_SHOW_TRACING_TOOL=True\nPROFILE_SHOW_CROPPING_TOOL=True\nNEW_USER_DEFAULT_GROUPS=['Users']"
     depends_on:
       - db
 
