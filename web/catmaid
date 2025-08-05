@@ -71,6 +71,13 @@ server {
         add_header Access-Control-Allow-Origin *;
     }
 
+    location /files/ {
+        alias /data/export/;
+
+        # CORS header to allow cross-site access to the data
+        add_header Access-Control-Allow-Origin *;
+    }
+
     location / {
         uwsgi_pass      django;
         include         uwsgi_params;

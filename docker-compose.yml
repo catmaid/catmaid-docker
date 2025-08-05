@@ -39,6 +39,7 @@ services:
       - ./volumes/app/static:/home/django/static
       - ./volumes/app/run:/var/run/catmaid:rw
       - /etc/localtime:/etc/localtime:ro
+      - ./volumes/app/export:/data/export
     environment:
       # set same as db credentials and dbname
       DB_HOST: db
@@ -47,6 +48,8 @@ services:
       DB_NAME: catmaid
       # Add example projects
       CM_EXAMPLE_PROJECTS: "true"
+      # Where CATMAID can write data to
+      CM_WRITEABLE_PATH: "'/data/export'"
       # Adjust the maximum size in Bytes of imported skeletons
       #CM_IMPORTED_SKELETON_FILE_MAXIMUM_SIZE: 5242880
       # The IP to listen on
@@ -55,8 +58,6 @@ services:
       #CM_PORT: 8000
       # Whether CATMAID's settings.py should be regenerated
       #CM_FORCE_CONFIG_UPDATE: "false"
-      # Where CATMAID can write data to
-      #CM_WRITEABLE_PATH: "/tmp"
       # The maximum number of nodes to fetch in one request
       #CM_NODE_LIMIT: 10000
       # Which node provider to use
@@ -87,6 +88,7 @@ services:
       - ./volumes/app/static:/static:ro
       - ./volumes/app/run/:/sockets:rw
       - /etc/localtime:/etc/localtime:ro
+      - ./volumes/app/export:/data/export
     environment:
       # Basic HTTP authentication can be enabled by setting the environment
       # variable HTTP_AUTH_ENABLED to true and setting the environment variables
