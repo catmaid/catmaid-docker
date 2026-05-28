@@ -9,7 +9,7 @@ DB_TUNE=${DB_TUNE:-true}
 DB_UPDATE=${DB_UPDATE:-false}
 AVAILABLE_MEMORY=`awk '/MemTotal/ { printf "%.3f \n", $2/1024 }' /proc/meminfo`
 INSTANCE_MEMORY=${INSTANCE_MEMORY:-$AVAILABLE_MEMORY}
-BIN_PG_VERSION="13"
+BIN_PG_VERSION="17"
 # The file might not be there, if no DB has been created yet
 if [[ -f /var/lib/postgresql/data/PG_VERSION ]]; then
   DATA_PG_VERSION=$(</var/lib/postgresql/data/PG_VERSION)
